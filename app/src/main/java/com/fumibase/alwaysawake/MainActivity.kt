@@ -61,7 +61,7 @@ private fun StartScreen() {
     val context = LocalContext.current
 
 
-    var chargeOnly by rememberSaveable { mutableStateOf(false) }
+    var chargeOnly by rememberSaveable { mutableStateOf(true) }
 
 
     var showUnpluggedMessage by remember { mutableStateOf(false) }
