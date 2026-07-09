@@ -1,12 +1,7 @@
-# Black Screen Keep Awake
-
-Version: 1.0
+# Always Awake
 
 ## 概要
 
-Xperiaをテザリング専用機として運用するためのAndroidアプリ。
-
-Game EnhancerのHSパワーコントロールと併用し、
 画面を消灯させずにOLEDの黒表示によって消費電力を抑えることを目的とする。
 
 本アプリはシンプルさと安定性を最優先とし、
@@ -17,7 +12,6 @@ Game EnhancerのHSパワーコントロールと併用し、
 # 対象環境
 
 - Android 12以降
-- Xperia
 - Kotlin
 - Jetpack Compose
 - Material3
@@ -257,9 +251,7 @@ Keep Screen Onを有効にする。
 
 # アプリ名
 
-仮名称
-
-Black Screen Keep Awake
+Always Awake
 
 変更しやすいよう定数化すること。
 
@@ -289,10 +281,4 @@ Androidのベストプラクティスに従うこと。
 コードは可読性を重視し、
 適切なコメントを付与すること。
 
-```
-Project Goal
 
-「黒画面を表示し続け、
-画面をスリープさせないだけの
-軽量Androidアプリ」
-```
