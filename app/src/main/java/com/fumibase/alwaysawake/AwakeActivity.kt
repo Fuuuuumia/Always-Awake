@@ -1,5 +1,10 @@
 package com.fumibase.alwaysawake
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.BatteryManager
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -16,12 +21,32 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 
-// 黒表示+スリープ無効化,ホーム遷移/アプリ終了/ダブルタップで脱出
 class AwakeActivity : ComponentActivity() {
 
-    //Activity生成時に黒画面表示
+    companion object {
+
+        const val EXTRA_CHARGE_ONLY = "extra_charge_only"
+
+        const val EXTRA_FINISH_REASON = "extra_finish_reason"
+        const val REASON_UNPLUGGED = "reason_unplugged"
+    }
+
+    private var chargeOnly = false
+
+    private var isReceiverRegistered = false
+
+    private val powerDisconnectedReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action == Intent.ACTION_POWER_DISCONNECTED) {
+                finishBecauseUnplugged()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        chargeOnly = intent.getBooleanExtra(EXTRA_CHARGE_ONLY, false)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -30,37 +55,71 @@ class AwakeActivity : ComponentActivity() {
         }
     }
 
-    // スリープ無効化
     override fun onResume() {
         super.onResume()
+
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         hideSystemBars()
+
+        if (chargeOnly) {
+
+            if (!isPluggedIn()) {
+                finishBecauseUnplugged()
+                return
+            }
+
+            registerReceiver(
+                powerDisconnectedReceiver,
+                IntentFilter(Intent.ACTION_POWER_DISCONNECTED)
+            )
+            isReceiverRegistered = true
+        }
     }
 
-    // スリープ有効化
     override fun onPause() {
+
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+
+        if (isReceiverRegistered) {
+            unregisterReceiver(powerDisconnectedReceiver)
+            isReceiverRegistered = false
+        }
         super.onPause()
     }
 
-    // ホーム遷移/アプリ終了時にActivity終了
     override fun onStop() {
         super.onStop()
+
         if (!isChangingConfigurations) {
             finish()
         }
     }
 
-    // ステータス,ナビゲーションバーの非表示
+
+    private fun finishBecauseUnplugged() {
+        setResult(RESULT_OK, Intent().putExtra(EXTRA_FINISH_REASON, REASON_UNPLUGGED))
+        finish()
+    }
+
+
+    private fun isPluggedIn(): Boolean {
+        // ACTION_BATTERY_CHANGEDはスティッキーなので、null受信で現在値を取得できる
+        val batteryStatus = registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        val plugged = batteryStatus?.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) ?: 0
+        return plugged != 0
+    }
+
     private fun hideSystemBars() {
         val controller = WindowInsetsControllerCompat(window, window.decorView)
         controller.hide(WindowInsetsCompat.Type.systemBars())
+        // スワイプ時のみ一時的にシステムバーを表示させる
         controller.systemBarsBehavior =
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
 }
 
-// 黒画面表示/ダブルタップ脱出
+
 @Composable
 private fun BlackScreen(onDoubleTap: () -> Unit) {
     Box(
