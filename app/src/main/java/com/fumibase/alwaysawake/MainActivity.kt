@@ -60,12 +60,9 @@ class MainActivity : ComponentActivity() {
 private fun StartScreen() {
     val context = LocalContext.current
 
-
     var chargeOnly by rememberSaveable { mutableStateOf(true) }
-
-
+    var showAwakeIcon by rememberSaveable { mutableStateOf(false) }
     var showUnpluggedMessage by remember { mutableStateOf(false) }
-
 
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -73,7 +70,6 @@ private fun StartScreen() {
         val reason = result.data?.getStringExtra(AwakeActivity.EXTRA_FINISH_REASON)
         showUnpluggedMessage = reason == AwakeActivity.REASON_UNPLUGGED
     }
-
 
     if (showUnpluggedMessage) {
         LaunchedEffect(Unit) {
@@ -90,23 +86,26 @@ private fun StartScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(24.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(stringResource(R.string.charge_only_option))
-                Spacer(Modifier.width(12.dp))
-                Switch(
-                    checked = chargeOnly,
-                    onCheckedChange = { chargeOnly = it }
-                )
-            }
+            OptionRow(
+                label = stringResource(R.string.charge_only_option),
+                checked = chargeOnly,
+                onCheckedChange = { chargeOnly = it }
+            )
+
+            Spacer(Modifier.height(12.dp))
+
+            OptionRow(
+                label = stringResource(R.string.show_awake_icon_option),
+                checked = showAwakeIcon,
+                onCheckedChange = { showAwakeIcon = it }
+            )
 
             Spacer(Modifier.height(24.dp))
 
             Button(onClick = {
                 val intent = Intent(context, AwakeActivity::class.java)
                     .putExtra(AwakeActivity.EXTRA_CHARGE_ONLY, chargeOnly)
+                    .putExtra(AwakeActivity.EXTRA_SHOW_AWAKE_ICON, showAwakeIcon)
                 launcher.launch(intent)
             }) {
                 Text(stringResource(R.string.start_button))
@@ -121,6 +120,25 @@ private fun StartScreen() {
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun OptionRow(
+    label: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text(label)
+        Spacer(Modifier.width(12.dp))
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange
+        )
     }
 }
 
