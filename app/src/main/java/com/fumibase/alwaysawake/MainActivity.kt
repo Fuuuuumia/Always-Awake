@@ -60,14 +60,9 @@ class MainActivity : ComponentActivity() {
 private fun StartScreen() {
     val context = LocalContext.current
 
-
     var chargeOnly by rememberSaveable { mutableStateOf(true) }
-
     var showAwakeIcon by rememberSaveable { mutableStateOf(false) }
-
-
     var showUnpluggedMessage by remember { mutableStateOf(false) }
-
 
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -75,7 +70,6 @@ private fun StartScreen() {
         val reason = result.data?.getStringExtra(AwakeActivity.EXTRA_FINISH_REASON)
         showUnpluggedMessage = reason == AwakeActivity.REASON_UNPLUGGED
     }
-
 
     if (showUnpluggedMessage) {
         LaunchedEffect(Unit) {

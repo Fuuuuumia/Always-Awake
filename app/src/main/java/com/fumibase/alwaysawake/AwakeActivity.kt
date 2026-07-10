@@ -43,19 +43,14 @@ import kotlin.random.Random
 class AwakeActivity : ComponentActivity() {
 
     companion object {
-
         const val EXTRA_CHARGE_ONLY = "extra_charge_only"
-
         const val EXTRA_SHOW_AWAKE_ICON = "extra_show_awake_icon"
-
         const val EXTRA_FINISH_REASON = "extra_finish_reason"
         const val REASON_UNPLUGGED = "reason_unplugged"
     }
 
     private var chargeOnly = false
-
-    private var showAwakeIcon = false
-
+    private var showScreenSaver = false
     private var isReceiverRegistered = false
 
     private val powerDisconnectedReceiver = object : BroadcastReceiver() {
@@ -70,13 +65,13 @@ class AwakeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         chargeOnly = intent.getBooleanExtra(EXTRA_CHARGE_ONLY, false)
-        showAwakeIcon = intent.getBooleanExtra(EXTRA_SHOW_AWAKE_ICON, false)
+        showScreenSaver = intent.getBooleanExtra(EXTRA_SHOW_AWAKE_ICON, false)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             BlackScreen(
-                showAwakeIcon = showAwakeIcon,
+                showAwakeIcon = showScreenSaver,
                 onDoubleTap = { finish() }
             )
         }
@@ -89,12 +84,10 @@ class AwakeActivity : ComponentActivity() {
         hideSystemBars()
 
         if (chargeOnly) {
-
-            if (!isPluggedIn()) {
+            if (!isPluggedIn() ) {
                 finishBecauseUnplugged()
                 return
             }
-
             registerReceiver(
                 powerDisconnectedReceiver,
                 IntentFilter(Intent.ACTION_POWER_DISCONNECTED)
@@ -104,10 +97,7 @@ class AwakeActivity : ComponentActivity() {
     }
 
     override fun onPause() {
-
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-
         if (isReceiverRegistered) {
             unregisterReceiver(powerDisconnectedReceiver)
             isReceiverRegistered = false
@@ -129,7 +119,6 @@ class AwakeActivity : ComponentActivity() {
         finish()
     }
 
-
     private fun isPluggedIn(): Boolean {
         val batteryStatus = registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
         val plugged = batteryStatus?.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) ?: 0
@@ -143,7 +132,6 @@ class AwakeActivity : ComponentActivity() {
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
 }
-
 
 @Composable
 private fun BlackScreen(
@@ -166,21 +154,12 @@ private fun BlackScreen(
 
 
 
-private const val ICON_FADE_MS = 1000
-
-private const val ICON_CYCLE_MS = 30_000L
-
-private const val ICON_HOLD_MS = ICON_CYCLE_MS - 2 * ICON_FADE_MS
-
+private const val GRAPHIC_FADE_MS = 1000
+private const val GRAPHIC_CYCLE_MS = 30_000L
+private const val GRAPHIC_HOLD_MS = GRAPHIC_CYCLE_MS - 2 * GRAPHIC_FADE_MS
 private val CURVE_STROKE_WIDTH = 1.2.dp
-
-
 private const val CURVE_SAMPLE_COUNT = 900
-
-
 private const val CURVE_T_MAX = 9f
-
-
 private const val CURVE_AMPLITUDE_RATIO = 0.46f
 
 
@@ -237,9 +216,9 @@ private fun AwakeIndicator() {
 
         LaunchedEffect(widthPx, heightPx) {
             while (true) {
-                alpha.animateTo(1f, tween(ICON_FADE_MS))
-                delay(ICON_HOLD_MS)
-                alpha.animateTo(0f, tween(ICON_FADE_MS))
+                alpha.animateTo(1f, tween(GRAPHIC_FADE_MS))
+                delay(GRAPHIC_HOLD_MS)
+                alpha.animateTo(0f, tween(GRAPHIC_FADE_MS))
                 seed = Random.nextLong()
             }
         }
