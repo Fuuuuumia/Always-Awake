@@ -30,7 +30,7 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AlwaysAwake"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode" />
+            android:configChanges="screenSize|screenLayout|keyboardHidden|uiMode" />
     </application>
 
 </manifest>
