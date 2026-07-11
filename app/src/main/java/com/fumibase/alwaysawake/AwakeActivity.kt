@@ -44,7 +44,7 @@ class AwakeActivity : ComponentActivity() {
 
     companion object {
         const val EXTRA_CHARGE_ONLY = "extra_charge_only"
-        const val EXTRA_SHOW_AWAKE_ICON = "extra_show_awake_icon"
+        const val EXTRA_SHOW_SCREEN_SAVER = "extra_show_awake_icon"
         const val EXTRA_FINISH_REASON = "extra_finish_reason"
         const val REASON_UNPLUGGED = "reason_unplugged"
     }
@@ -65,7 +65,7 @@ class AwakeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         chargeOnly = intent.getBooleanExtra(EXTRA_CHARGE_ONLY, false)
-        showScreenSaver = intent.getBooleanExtra(EXTRA_SHOW_AWAKE_ICON, false)
+        showScreenSaver = intent.getBooleanExtra(EXTRA_SHOW_SCREEN_SAVER, false)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -84,7 +84,7 @@ class AwakeActivity : ComponentActivity() {
         hideSystemBars()
 
         if (chargeOnly) {
-            if (!isPluggedIn() ) {
+            if (!isPluggedIn()) {
                 finishBecauseUnplugged()
                 return
             }

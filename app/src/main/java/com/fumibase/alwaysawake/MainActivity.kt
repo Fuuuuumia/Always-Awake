@@ -61,7 +61,7 @@ private fun StartScreen() {
     val context = LocalContext.current
 
     var chargeOnly by rememberSaveable { mutableStateOf(true) }
-    var showAwakeIcon by rememberSaveable { mutableStateOf(false) }
+    var showScreenSaver by rememberSaveable { mutableStateOf(false) }
     var showUnpluggedMessage by remember { mutableStateOf(false) }
 
     val launcher = rememberLauncherForActivityResult(
@@ -95,9 +95,9 @@ private fun StartScreen() {
             Spacer(Modifier.height(12.dp))
 
             OptionRow(
-                label = stringResource(R.string.show_awake_icon_option),
-                checked = showAwakeIcon,
-                onCheckedChange = { showAwakeIcon = it }
+                label = stringResource(R.string.show_screen_saver_option),
+                checked = showScreenSaver,
+                onCheckedChange = { showScreenSaver = it }
             )
 
             Spacer(Modifier.height(24.dp))
@@ -105,7 +105,7 @@ private fun StartScreen() {
             Button(onClick = {
                 val intent = Intent(context, AwakeActivity::class.java)
                     .putExtra(AwakeActivity.EXTRA_CHARGE_ONLY, chargeOnly)
-                    .putExtra(AwakeActivity.EXTRA_SHOW_AWAKE_ICON, showAwakeIcon)
+                    .putExtra(AwakeActivity.EXTRA_SHOW_SCREEN_SAVER, showScreenSaver)
                 launcher.launch(intent)
             }) {
                 Text(stringResource(R.string.start_button))
