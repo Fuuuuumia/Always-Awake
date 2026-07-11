@@ -73,12 +73,14 @@ MainActivity (待機画面)      AwakeActivity (黒画面)
 ## 動作フロー
 
 ```mermaid
-    A[アプリ起動] --> B
-    B[MainActivity 待機画面] -->(Start)--> C
-    C[AwakeActivity 黒画面] -->(ダブルタップ)--> B
-    C -->(ホーム・他アプリ遷移/アプリ終了)--> B
-    C -->(電源が外れた ※pluggedOnlyオプション有効時) --> D
-    D[終了理由をトーストで表示] --> B
+flowchart TD
+
+A[アプリ起動] --> B
+B[MainActivity 待機画面] -->|Start| C
+C[AwakeActivity 黒画面] -->|ダブルタップ| B
+C -->|ホーム・他アプリ遷移| B
+C -->|電源供給停止 ※pluggedOnly| D
+D[終了理由表示] --> B
 ```
 
 待機画面で 2 つのオプションを設定し、`Start` で黒画面へ遷移する。フラグは `Intent` の extra で受け渡す。
