@@ -11,8 +11,8 @@
 | 項目 | 値 |
 |---|---|
 | 最小 | Android 12 (API 31) |
-| 対象 | Android 14 (API 36) |
-| ビルド | SDK 37 / JDK 11 |
+| 対象 | Android 16 (API 36) |
+| ビルド | SDK 37 / JDK 17+（Java互換: 11） |
 
 ### ハードウェア
 
@@ -87,7 +87,7 @@ MainActivity (待機画面)      AwakeActivity (黒画面)
 val intent = Intent(context, AwakeActivity::class.java)
     .putExtra(AwakeActivity.EXTRA_CHARGE_ONLY, chargeOnly)
     .putExtra(AwakeActivity.EXTRA_SHOW_AWAKE_ICON, showAwakeIcon)
-launcher.launch(intent) 
+launcher.launch(intent)
 ```
 
 ### 点灯のライフサイクル管理
